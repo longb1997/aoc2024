@@ -31,11 +31,11 @@ function solve(inputs, part) {
 
     // Kiểm tra và tính số lần nhấn nút A
     if ((buttonBY * prizeX - buttonBX * prizeY) % det !== 0) continue;
-    const APresses = Math.floor((buttonBY * prizeX - buttonBX * prizeY) / det);
+    const APresses = (buttonBY * prizeX - buttonBX * prizeY) / det;
 
     // Kiểm tra và tính số lần nhấn nút B
     if ((buttonAX * prizeY - buttonAY * prizeX) % det !== 0) continue;
-    const BPresses = Math.floor((buttonAX * prizeY - buttonAY * prizeX) / det);
+    const BPresses = (buttonAX * prizeY - buttonAY * prizeX) / det;
 
     if (APresses >= 0 && BPresses >= 0) {
       totalTokens += 3 * APresses + BPresses;
