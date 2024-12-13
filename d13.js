@@ -34,8 +34,8 @@ function solve(inputs, part) {
     const APresses = Math.floor((buttonBY * prizeX - buttonBX * prizeY) / det);
 
     // Kiểm tra và tính số lần nhấn nút B
-    if ((-buttonAY * prizeX + buttonAX * prizeY) % det !== 0) continue;
-    const BPresses = Math.floor((-buttonAY * prizeX + buttonAX * prizeY) / det);
+    if ((buttonAX * prizeY - buttonAY * prizeX) % det !== 0) continue;
+    const BPresses = Math.floor((buttonAX * prizeY - buttonAY * prizeX) / det);
 
     if (APresses >= 0 && BPresses >= 0) {
       totalTokens += 3 * APresses + BPresses;
