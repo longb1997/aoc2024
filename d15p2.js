@@ -6,7 +6,8 @@ function addt(x, y) {
     return [x[0] + y[0], x[1] + y[1]];
   }
   
-  return x.map((val, i) => val + y[i]);
+  // Hàm addt chỉ cần cộng 2 số với nhau
+  return [x + y];
 }
 
 const DIRS = [
