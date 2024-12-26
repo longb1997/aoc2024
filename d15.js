@@ -1,5 +1,7 @@
 const fs = require("fs");
 
+// PART 2 LỪA VL, TƯỞNG KHÓ MÀ DỄ
+
 function addt(x, y) {
   if (x.length === 2) {
     return [x[0] + y[0], x[1] + y[1]];
@@ -173,6 +175,6 @@ function solve(input, part) {
   return c;
 }
 
-const input = fs.readFileSync("input8.txt", "utf8");
+const input = fs.readFileSync("input15.txt", "utf8");
 console.log("Part 1:", solve(input, 1));
 console.log("Part 2:", solve(input, 2));

@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const file = fs.readFileSync(`input20.txt`, 'utf8');
 
 let racetrack = file.trim().split("\n").map(b => b.split(""))

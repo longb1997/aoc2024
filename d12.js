@@ -1,12 +1,12 @@
 const fs = require("fs");
 const input = fs.readFileSync("input12.txt", "utf8").split("\n");
 
-// Hàm tạo chuỗi từ tọa độ
+// Đề nay khoai vl
+
 function posToString([r, c]) {
   return `${r},${c}`;
 }
 
-// Hàm tính diện tích
 function perimeter(points) {
   const pointSet = new Set(points.map(posToString));
   let ans = 0;
@@ -37,17 +37,16 @@ function sides(points) {
 
   // Duyệt qua từng điểm trong vùng
   for (const [r, c] of points) {
-    // Mảng chứa 4 điểm lân cận theo thứ tự: dưới, trên, phải, trái
     const neighbors = [
-      [r + 1, c], // điểm phía dưới
-      [r - 1, c], // điểm phía trên
-      [r, c + 1], // điểm bên phải
-      [r, c - 1], // điểm bên trái
+      [r + 1, c], // Dưới
+      [r - 1, c], // Trên
+      [r, c + 1], // Phải
+      [r, c - 1], // Trái
     ];
 
-    // Kiểm tra từng điểm lân cận
+    // Kiểm tra từng pos
     for (const [nr, nc] of neighbors) {
-      // Nếu điểm lân cận không thuộc vùng (không có trong pointSet)
+      // Nếu pos không thuộc vùng (không có trong pointSet)
       if (!pointSet.has(posToString([nr, nc]))) {
         // Thêm cạnh mới vào perim
         // Cạnh được lưu dưới dạng "nr,nc,r,c" với:
@@ -58,7 +57,6 @@ function sides(points) {
     }
   }
 
-  // Biến đếm số cạnh độc lập
   let ans = 0;
 
   // Duyệt qua từng cạnh trong perim

@@ -1,6 +1,8 @@
 const fs = require("fs");
 const input = fs.readFileSync("input14.txt", "utf8")
 
+// Không khó lắm
+
 function solve(inputs, part) {
     // Mỗi robot có dạng [x, y, vx, vy] - vị trí và vận tốc
     const robots = inputs.split('\n').map(e => {

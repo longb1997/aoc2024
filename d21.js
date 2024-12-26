@@ -1,6 +1,8 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const file = fs.readFileSync(`input21.txt`, 'utf8');
 let numbers = file.trim().split("\n")
+
+// Bài này khó vl, đọc mãi mới hiểu
 
 function numberAt(row, col) {
     const numbers = [
@@ -92,7 +94,7 @@ function solveNumber(row, col, targetNumber) {
         }
     }
     let ret = Object.keys(possibleAnswers)
-    // Only keep options that change direction as seldom as possible
+    // Chỉ giữ lại những lựa chọn có ít thay đổi hướng nhất có thể
     let goal = bestSwitch(ret);
     ret = ret.filter(r => switchBacks(r) <= goal)
     numberCache[cacheKey] = ret
@@ -161,7 +163,7 @@ function solveDiag(row, col, targetDiag) {
         }
     }
     let ret = Object.keys(possibleAnswers)
-    // Only keep options that change direction as seldom as possible
+    // Chỉ giữ lại những lựa chọn có ít thay đổi hướng nhất có thể
     let goal = bestSwitch(ret);
     ret = ret.filter(r => switchBacks(r) <= goal)
     diagonalCache[cacheKey] = ret
@@ -185,7 +187,7 @@ function processNumber(n) {
         }
         heads = newHeads
     }
-    // Only keep options that change direction as seldom as possible
+    // Chỉ giữ lại những lựa chọn có ít thay đổi hướng nhất có thể
     let goal = bestSwitch(heads);
     heads = heads.filter(r => switchBacks(r) <= goal)
     return heads
@@ -208,7 +210,7 @@ function processDiagonal(n) {
         }
         heads = newHeads
     }
-    // Only keep options that change direction as seldom as possible
+    // Chỉ giữ lại những lựa chọn có ít thay đổi hướng nhất có thể
     let goal = bestSwitch(heads);
     heads = heads.filter(r => switchBacks(r) <= goal)
     return heads
@@ -223,11 +225,9 @@ function punchInput(levels) {
             let temp = findShortestSequence(arrows, levels, 0);
             shortLength = Math.min(shortLength, temp);
         }
-        // console.log("For " + doorCode + " the shortest path is " + shortLength)
         let s = doorCode.replace("A", "")
         s = s.replace(/^0*/, "")
         let number = parseInt(s) * shortLength
-        // console.log("Answer for " + doorCode + " is " + number)
         ret += number
     }
     return ret;
@@ -243,22 +243,22 @@ function findShortestSequence(instr, maxLevel, currentLevel) {
     if (fragmentCache[cacheKey] !== undefined) {
         return fragmentCache[cacheKey];
     }
-    // Get all the different ways these instructions can be punched at level + 1
+    // Lấy tất cả các cách khác nhau mà có thể nhập lệnh này ở level + 1
     let nextCommands = processDiagonal(instr);
     let best = Number.MAX_VALUE;
     for (const nextCommand of nextCommands) {
-        // Split the command into pieces separated by A
-        // This lets us cache the results of the subcommands
+        // Tách lệnh thành các phần được ngăn cách bởi A
+        // => cho phép ta cache kết quả của các lệnh con
         let parts = nextCommand.split('A')
-        // IMPORTANT, DROP THE LAST A
+        // QUAN TRỌNG: BỎ CHỮ A CUỐI CÙNG
         parts.pop()
-        // Now we have a list of commands that can be punched at the next level
-        // And get some use out of our cache
+        // Giờ ta có danh sách các lệnh có thể được nhập ở level tiếp theo
+        // => tận dụng được cache của mình
         let shortest = 0;
         for (let splitCommand of parts) {
-            // See the +A in the recursive call? That's why we have to have pop above
-            // And we have to add it back here so we can be sure our robot is chilling
-            // back at square zero after each command
+            // Thêm A vào cuối recursive call? Đó lý do tại sao ta phải pop ở trên
+            // Và phải thêm lại nó ở đây để chắc chắn robot của ta quay về vị trí ban đầu
+            // Thực hiện sau mỗi lệnh
             shortest += findShortestSequence(splitCommand + "A", maxLevel, currentLevel + 1);
         }
         best = Math.min(best, shortest);

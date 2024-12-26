@@ -1,6 +1,5 @@
 const fs = require("fs");
 
-// Đọc nội dung file input
 function readInput() {
   return fs.readFileSync("input8.txt", "utf-8");
 }

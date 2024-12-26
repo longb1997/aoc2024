@@ -1,102 +1,112 @@
 const fs = require("fs");
-const input = fs.readFileSync("input9.txt", "utf8").trim().split("");
 
-// Helper function to get range of consecutive same values
-function getRange(disk, i) {
-    let a = i, b = i;
-    while (a >= 1 && disk[a - 1] === disk[i]) a--;
-    while (b + 1 < disk.length && disk[b + 1] === disk[i]) b++;
-    return [a, b];
+// Khó VL
+
+// Đọc và parse input
+const input = fs.readFileSync("input9.txt", "utf8")
+  .trim()
+  .split("")
+  .map(Number);
+
+// Hàm tạo disk ban đầu
+function createDisk(input) {
+  const disk = [];
+  for (let i = 0; i < input.length; i++) {
+    if (i % 2 === 0) {
+      // File ID
+      for (let j = 0; j < input[i]; j++) {
+        disk.push(i / 2);
+      }
+    } else {
+      // Khoảng trống
+      for (let j = 0; j < input[i]; j++) {
+        disk.push(-1); 
+      }
+    }
+  }
+  return disk;
 }
 
-function solve(input, part) {
-  const startTime = performance.now();
-  const numbers = input.map((n) => parseInt(n));
-  let disk = [];
-  let fileId = 0;
-
-  // Build initial array
-  for (let i = 0; i < numbers.length; i++) {
-    const len = numbers[i];
-    for (let j = 0; j < len; j++) {
-      if (i % 2 === 0) {
-        disk.push(fileId);
-      } else {
-        disk.push(".");  // Using "." instead of -1 to maintain compatibility
-      }
-    }
-    if (i % 2 === 1) {
-      fileId++;
-    }
-  }
-
-  if (part === 1) {
-    // Part 1 logic remains the same
-    let left = 0;
-    let right = disk.length - 1;
-
-    while (true) {
-      while (left < disk.length && disk[left] !== ".") {
-        left++;
-      }
-      while (right > left && disk[right] === ".") {
-        right--;
-      }
-
-      if (left >= right) {
-        break;
-      }
-
-      [disk[left], disk[right]] = [disk[right], disk[left]];
-    }
-  }
-
-  if (part === 2) {
-    // New optimized Part 2 logic
-    const attempted = new Set();
-
-    for (let j = disk.length - 1; j >= 0; j--) {
-      if (disk[j] === "." || attempted.has(disk[j])) continue;
-      
-      attempted.add(disk[j]);
-      const [a, b] = getRange(disk, j);
-      const lenJ = b - a + 1;
-      
-      let i = 0;
-      while (i < j) {
-        if (disk[i] !== ".") {
-          i++;
-          continue;
-        }
-        
-        const [c, d] = getRange(disk, i);
-        const lenI = d - c + 1;
-        
-        if (lenI >= lenJ) {
-          // Swap ranges
-          for (let k = 0; k < lenJ; k++) {
-            [disk[c + k], disk[a + k]] = [disk[a + k], disk[c + k]];
-          }
-          break;
-        } else {
-          i = d + 1;
-        }
-      }
-    }
-  }
-
-  // Calculate checksum
-  let checksum = 0;
-  for (let i = 0; i < disk.length; i++) {
-    if (disk[i] !== ".") {
-      checksum += i * disk[i];
-    }
-  }
+// Part 1: Di chuyển file từ phải sang trái
+function solvePart1(disk) {
+  const diskCopy = [...disk];
   
-  const endTime = performance.now();
-  console.log(`Call took ${endTime - startTime} milliseconds`);
-  return checksum;
+  for (let left = 0; left < diskCopy.length; left++) {
+    if (diskCopy[left] !== -1) continue;
+
+    for (let right = diskCopy.length - 1; right >= 0; right--) {
+      if (left >= right) break;
+      if (diskCopy[right] === -1) continue;
+      
+      diskCopy[left] = diskCopy[right];
+      diskCopy[right] = -1;
+      break;
+    }
+  }
+
+  return calculateScore(diskCopy);
 }
 
-console.log("Part 1:", solve(input, 1));
-console.log("Part 2:", solve(input, 2));
+// Part 2: Di chuyển file liên tiếp từ phải sang trái
+function solvePart2(disk) {
+  const diskCopy = [...disk];
+  const moved = new Set();
+
+  for (let right = diskCopy.length - 1; right > 0; right--) {
+    const fileId = diskCopy[right];
+    if (fileId === -1 || moved.has(fileId)) continue;
+
+    // Tìm kích thước file
+    let fileStart = right;
+    while (diskCopy[fileStart] === fileId && fileStart > 0) {
+      fileStart--;
+    }
+    const fileSize = right - fileStart;
+
+    // Tìm vị trí trống phù hợp bên trái
+    let left = 0;
+    let fits = false;
+    
+    while (left < right) {
+      if (diskCopy[left] !== -1) {
+        left++;
+        continue;
+      }
+
+      fits = true;
+      for (let i = 0; i < fileSize; i++) {
+        if (diskCopy[left + i] !== -1) {
+          fits = false;
+          left += i;
+          break;
+        }
+      }
+      
+      if (fits) break;
+      left++;
+    }
+
+    // Di chuyển file nếu tìm được vị trí phù hợp
+    if (fits) {
+      for (let i = 0; i < fileSize; i++) {
+        diskCopy[left + i] = fileId;
+        diskCopy[right - i] = -1;
+      }
+      moved.add(fileId);
+    }
+    right = fileStart + 1;
+  }
+
+  return calculateScore(diskCopy);
+}
+
+// Tính điểm dựa trên vị trí các file
+function calculateScore(disk) {
+  return disk.reduce((score, fileId, index) => {
+    return fileId !== -1 ? score + fileId * index : score;
+  }, 0);
+}
+
+const disk = createDisk(input);
+console.log("Part 1:", solvePart1(disk));
+console.log("Part 2:", solvePart2(disk));

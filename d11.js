@@ -1,63 +1,68 @@
-// Sử dụng Map để lưu trữ kết quả đã tính (memoization)
 const memo = new Map();
 
-// Tạo key duy nhất cho mỗi cặp (x,n) để lưu vào memo
 function getKey(x, n) {
     return `${x},${n}`;
 }
 
+// KHOAI PHẾT
+
+// Quy hoạch động
+// x: số hiện tại, n: số bước còn lại
 function dp(x, n) {
-    // Case1: khi hết bước (n=0), trả về 1
+    // Điều kiện dừng: khi hết bước
     if (n === 0) return 1;
     
-    // Kiểm tra xem kết quả đã được tính trước đó chưa
+    // Kiểm tra xem kết quả đã được tính chưa
     const key = getKey(x, n);
     if (memo.has(key)) return memo.get(key);
     
-    // Trường hợp x = 0: chuyển thành 1 và giảm n đi 1
+    let result;
     if (x === 0) {
-        const result = dp(1, n - 1);
-        memo.set(key, result);
-        return result;
-    }
-    
-    const strX = x.toString();
-    // Trường hợp số chẵn số chữ số: chia thành 2 nửa bằng nhau
-    if (strX.length % 2 === 0) {
-        const mid = Math.floor(strX.length / 2);
-        // Tách thành 2 số a và b
-        const a = parseInt(strX.slice(0, mid));
-        const b = parseInt(strX.slice(mid));
-        // Tính tổng kết quả của việc xử lý từng nửa
-        const result = dp(a, n - 1) + dp(b, n - 1);
-        memo.set(key, result);
-        return result;
+        // Nếu x = 0, chuyển thành 1 và giảm số bước
+        result = dp(1, n - 1);
     } else {
-        // Trường hợp số lẻ số chữ số: nhân với 2024
-        const result = dp(x * 2024, n - 1);
-        memo.set(key, result);
-        return result;
+        const strX = x.toString();
+        if (strX.length % 2 === 0) {
+            // Nếu số chữ số chẵn, chia đôi thành 2 số
+            const mid = Math.floor(strX.length / 2);
+            const a = parseInt(strX.slice(0, mid));  // Nửa đầu
+            const b = parseInt(strX.slice(mid));     // Nửa sau
+            // Tổng kết quả của cả 2 nhánh
+            result = dp(a, n - 1) + dp(b, n - 1);
+        } else {
+            // Nếu số chữ số lẻ, nhân với 2024
+            result = dp(x * 2024, n - 1);
+        }
     }
+
+    // Lưu kết quả vào memo để tái sử dụng
+    memo.set(key, result);
+    return result;
 }
 
 const fs = require('fs');
 
-try {
-    const timeStart = performance.now();
-    // Đọc dữ liệu từ file input
+const main = (part) => {
+    try {
+        const timeStart = performance.now();
+        
     const input = fs.readFileSync('input11.txt', 'utf8');
-    // Chuyển đổi input thành mảng các số
-    const numbers = input.trim().split(' ').map(x => parseInt(x));
+    const numbers = input.trim().split(' ').map(Number);
     
-    // Tính tổng kết quả cho mỗi số trong input
-    let sum = 0;
-    for (const x of numbers) {
-        sum += dp(x, 75);
+
+    if (part === 1) {
+        const sum = numbers.reduce((acc, x) => acc + dp(x, 25), 0);
+        console.log(sum.toString());
+    } else {
+        const sum = numbers.reduce((acc, x) => acc + dp(x, 75), 0);
+        console.log(sum.toString());
     }
     
-    console.log(sum.toString());
-    const timeEnd = performance.now();
-    console.log(`Time taken: ${timeEnd - timeStart} milliseconds`);
-} catch (err) {
-    console.error('error:', err);
+    console.log(`Time taken: ${performance.now() - timeStart} milliseconds`);
+    } catch (err) {
+        console.error('Error:', err);
+    }
 }
+
+main(1)
+main(2)

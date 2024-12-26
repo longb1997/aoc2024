@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const file = fs.readFileSync(`input22.txt`, 'utf8');
 
 let allSecrets = file.trim().split("\n").map(n => BigInt(parseInt(n)))

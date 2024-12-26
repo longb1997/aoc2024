@@ -1,6 +1,7 @@
 const fs = require("fs");
-// Đọc file input và chuyển thành mảng 2 chiều các số nguyên
 const d = fs.readFileSync("input10.txt", "utf8").trim().split("\n").map(b => b.split("").map(c => parseInt(c)))
+
+// Khó VL, Comment chi tiết kẻo sau đọc lại éo hiểu gì
 
 // Hàm tìm các bước tiếp theo có thể đi được
 // Trả về mảng các vị trí [row, col] có giá trị bằng giá trị hiện tại + 1

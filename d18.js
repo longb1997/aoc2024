@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const file = fs.readFileSync(`input18.txt`, 'utf8');
 
 let input = file.trim().split("\n").map(b => b.split(",").map(c => parseInt(c)))

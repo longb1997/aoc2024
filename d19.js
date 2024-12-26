@@ -1,10 +1,8 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const file = fs.readFileSync(`input19.txt`, 'utf8');
 
 let towels = file.trim().split("\n\n")[0].split(", ")
 let designs = file.trim().split("\n\n")[1].split("\n")
-
-console.log()
 
 let cache = {}
 
